@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İyi ki Doğdun 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    height: 100dvh;
+    overflow: hidden;
+    font-family: "Baloo 2", "Chalkboard SE", "Comic Sans MS", system-ui, sans-serif;
+    background: radial-gradient(ellipse at 50% 20%, #3b1a5c 0%, #1a1040 55%, #120a2e 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2vmin;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  /* ---------- arka plan süsleri ---------- */
+  .yildiz {
+    position: fixed;
+    border-radius: 50%;
+    background: #ffe9a8;
+    animation: paril 2.4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes paril {
+    0%, 100% { opacity: .15; transform: scale(.8); }
+    50%      { opacity: .9;  transform: scale(1.15); }
+  }
+
+  .balon {
+    position: fixed;
+    bottom: -18vh;
+    width: 5vmin;
+    height: 6.4vmin;
+    border-radius: 50% 50% 50% 50% / 44% 44% 56% 56%;
+    opacity: .75;
+    animation: ucusSuz linear infinite;
+    pointer-events: none;
+  }
+  .balon::before { /* balonun ağzı */
+    content: "";
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: .8vmin solid transparent;
+    border-top-color: inherit;
+  }
+  .balon::after { /* ipi */
+    content: "";
+    position: absolute;
+    top: calc(100% + .8vmin); left: 50%;
+    width: 2px; height: 7vmin;
+    background: rgba(255,255,255,.45);
+  }
+  @keyframes ucusSuz {
+    0%   { transform: translate(0, 0) rotate(-4deg); }
+    25%  { transform: translate(3vmin, -34vh) rotate(4deg); }
+    50%  { transform: translate(-2vmin, -67vh) rotate(-3deg); }
+    75%  { transform: translate(2.5vmin, -101vh) rotate(4deg); }
+    100% { transform: translate(0, -135vh) rotate(-4deg); }
+  }
+
+  /* ---------- yazılar ---------- */
+  h1 {
+    font-size: clamp(34px, 9vmin, 84px);
+    font-weight: 800;
+    line-height: 1.05;
+    text-align: center;
+    background: linear-gradient(90deg, #ffd166, #ff6b9d 45%, #8ecae6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 4px 12px rgba(255, 107, 157, .35));
+    animation: zipla 2.6s ease-in-out infinite;
+  }
+  @keyframes zipla {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-1.2vmin); }
+  }
+
+  .istemi {
+    font-size: clamp(18px, 4vmin, 32px);
+    color: #ffe9a8;
+    animation: nabiz 1.1s ease-in-out infinite;
+  }
+  @keyframes nabiz {
+    50% { transform: scale(1.08); }
+  }
+
+  .mesaj {
+    font-size: clamp(20px, 4.5vmin, 36px);
+    color: #a8f0c6;
+    text-align: center;
+    opacity: 0;
+    transform: scale(.6);
+    transition: opacity .6s, transform .6s;
+  }
+  .mesaj.acik { opacity: 1; transform: scale(1); }
+
+  button {
+    font: inherit;
+    font-size: clamp(16px, 3.4vmin, 26px);
+    font-weight: 600;
+    padding: .55em 1.3em;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #ff6b9d, #ff9e57);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(255, 107, 157, .4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .5s .4s;
+  }
+  button.acik { opacity: 1; pointer-events: auto; }
+  button:active { transform: scale(.95); }
+
+  .gizli { visibility: hidden; }
+
+  /* ---------- pasta ---------- */
+  .sahne {
+    position: relative;
+    width: min(64vmin, 380px);
+    margin-top: 1vmin;
+    z-index: 2;
+  }
+
+  .mumlar {
+    position: absolute;
+    bottom: calc(100% - 12vmin + 2px);
+    left: 17%; right: 17%; /* üst katın genişliğiyle aynı */
+    display: flex;
+    justify-content: center;
+    gap: 7%;
+    z-index: 3;
+  }
+
+  .mum {
+    position: relative;
+    width: 3.4vmin;
+    height: 11vmin;
+    border-radius: 4px 4px 2px 2px;
+    background: repeating-linear-gradient(48deg,
+      var(--m) 0 8px, #fff 8px 16px);
+  }
+  .mum:nth-child(1) { --m: #ff8fab; }
+  .mum:nth-child(2) { --m: #8ecae6; }
+  .mum:nth-child(3) { --m: #ffd166; }
+  .mum:nth-child(4) { --m: #a8f0c6; }
+  .mum:nth-child(5) { --m: #c9a7ff; }
+
+  .fitil {
+    position: absolute;
+    top: -2.2vmin; left: 50%;
+    transform: translateX(-50%);
+    width: 2px; height: 2.4vmin;
+    background: #3d2b1f;
+  }
+
+  .alev {
+    position: absolute;
+    bottom: calc(100% - 0.4vmin);
+    left: 50%;
+    margin-left: -1.5vmin; /* genişliğin yarısı: fitilin tam üstünde ortala */
+    width: 3vmin;
+    height: 4.6vmin;
+    background: radial-gradient(circle at 50% 75%, #fff7d6 0 18%, #ffd166 40%, #ff9e3d 70%, rgba(255, 110, 40, 0) 72%);
+    border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+    transform-origin: 50% 100%;
+    filter: drop-shadow(0 0 12px rgba(255, 180, 60, .9))
+            drop-shadow(0 0 30px rgba(255, 140, 40, .5));
+    animation: titre .18s ease-in-out infinite alternate;
+    transition: transform .3s, opacity .3s;
+  }
+  .mum.sondu .alev {
+    transform: scale(0);
+    opacity: 0;
+    animation: none;
+    filter: none;
+  }
+  @keyframes titre {
+    from { transform: scale(1) rotate(-2.5deg); }
+    to   { transform: scale(1.08, 1.18) rotate(2.5deg); }
+  }
+
+  .duman {
+    position: absolute;
+    bottom: calc(100% + 1vmin);
+    left: 50%;
+    width: 1.8vmin;
+    height: 1.8vmin;
+    border-radius: 50%;
+    background: rgba(200, 200, 210, .55);
+    filter: blur(4px);
+    animation: yuksel 1.8s ease-out forwards;
+    pointer-events: none;
+  }
+  @keyframes yuksel {
+    0%   { transform: translate(-50%, 0) scale(.5); opacity: .8; }
+    100% { transform: translate(calc(-50% + 2vmin), -9vmin) scale(2.2); opacity: 0; }
+  }
+
+  .pasta { position: relative; padding-top: 12vmin; }
+
+  .kat {
+    position: relative;
+    border-radius: 2.2vmin;
+    background:
+      radial-gradient(circle 3px at 12% 55%, #ff6b9d 3px, transparent 4px),
+      radial-gradient(circle 3px at 38% 80%, #8ecae6 3px, transparent 4px),
+      radial-gradient(circle 3px at 66% 40%, #ffd166 3px, transparent 4px),
+      radial-gradient(circle 3px at 88% 75%, #a8f0c6 3px, transparent 4px),
+      var(--k);
+    box-shadow: inset 0 -1.2vmin 0 rgba(0,0,0,.12);
+  }
+  .kat.ust { --k: #ffb3c6; height: 15vmin; width: 66%; margin: 0 auto; z-index: 2; }
+  .kat.alt { --k: #ff8fab; height: 18vmin; width: 100%; margin-top: .8vmin; }
+
+  .krem {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 34%;
+    border-radius: 2.2vmin 2.2vmin 0 0;
+    background: #fff6ec;
+  }
+  .krem::after { /* krem damlaları */
+    content: "";
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    height: 2.4vmin;
+    background: radial-gradient(circle 1.6vmin at 1.6vmin 0, #fff6ec 1.5vmin, transparent 1.6vmin);
+    background-size: 4.2vmin 2.4vmin;
+  }
+
+  .tabak {
+    position: relative;
+    width: 118%;
+    left: -9%;
+    height: 5vmin;
+    border-radius: 50%;
+    background: linear-gradient(#f3eeff, #cfc4f5);
+    box-shadow: 0 1.6vmin 3vmin rgba(0,0,0,.45);
+    z-index: 1;
+  }
+
+  /* ---------- konfeti ---------- */
+  .konfeti {
+    position: fixed;
+    top: -24px;
+    pointer-events: none;
+    animation: duss linear forwards;
+  }
+  @keyframes duss {
+    to { transform: translateY(115vh) rotate(720deg); }
+  }
+
+  /* ---------- açılış mektubu ---------- */
+  #mektup-ekrani {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: radial-gradient(ellipse at 50% 20%, #3b1a5c 0%, #1a1040 55%, #120a2e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity .7s;
+  }
+  #mektup-ekrani.gitti { opacity: 0; pointer-events: none; }
+
+  .zarf-alani {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3.5vmin;
+  }
+  .zarf-baslik {
+    font-size: clamp(22px, 5vmin, 40px);
+    color: #ffe9a8;
+    text-align: center;
+    transition: opacity .5s;
+  }
+  .zarf-baslik.solsun { opacity: 0; }
+
+  .zarf {
+    position: relative;
+    width: min(82vmin, 430px);
+    aspect-ratio: 10 / 6.4;
+    perspective: 900px;
+  }
+  .zarf-arka {
+    position: absolute;
+    inset: 0;
+    background: #c94f6d;
+    border-radius: 10px;
+    z-index: 1;
+  }
+  .mektup {
+    position: absolute;
+    left: 5%; right: 5%;
+    top: 8%;
+    height: 92%;
+    z-index: 2;
+    background: #fff8ef;
+    border-radius: 10px;
+    color: #7a4258;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1vmin;
+    padding-top: 3vmin;
+    text-align: center;
+    box-shadow: 0 1vmin 3vmin rgba(0,0,0,.35);
+    transition: transform .8s ease .45s;
+  }
+  .mektup h2 {
+    font-size: clamp(20px, 5vmin, 38px);
+    color: #e04f78;
+    line-height: 1.1;
+  }
+  .mektup p { font-size: clamp(14px, 3vmin, 22px); }
+  .mektup .mektup-ipucu {
+    margin-top: 1.4vmin;
+    color: #b23a63;
+    animation: nabiz 1.1s ease-in-out infinite;
+  }
+  .zarf.acik .mektup { transform: translateY(-62%); }
+
+  .zarf-on {
+    position: absolute;
+    inset: 0;
+    background: #e76583;
+    clip-path: polygon(0 0, 50% 64%, 100% 0, 100% 100%, 0 100%);
+    z-index: 3;
+  }
+  .kapak {
+    position: absolute;
+    inset: 0;
+    background: #ef8896;
+    clip-path: polygon(0 0, 100% 0, 50% 64%);
+    transform-origin: 50% 0;
+    z-index: 4;
+    transition: transform .7s ease, z-index 0s .35s;
+  }
+  .zarf.acik .kapak {
+    transform: rotateX(-180deg);
+    z-index: 1;
+  }
+  .muhur {
+    position: absolute;
+    left: 50%; top: 56%;
+    transform: translate(-50%, -50%);
+    width: 14%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ff8fb0, #d94f7e 70%);
+    display: grid;
+    place-items: center;
+    font-size: clamp(16px, 3.6vmin, 30px);
+    z-index: 5;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+    transition: opacity .3s;
+  }
+  .zarf.acik .muhur { opacity: 0; }
+
+  .zarf-ipucu {
+    font-size: clamp(18px, 4vmin, 30px);
+    color: #ffe9a8;
+    animation: nabiz 1.1s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .01s !important; animation-iteration-count: 1 !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div id="mektup-ekrani">
+    <div class="zarf-alani">
+      <p class="zarf-baslik">💌 Senin doğum günü mesajın</p>
+      <div class="zarf" id="zarf">
+        <div class="zarf-arka"></div>
+        <div class="mektup">
+          <h2 id="mektup-baslik">İyi ki doğdun!</h2>
+          <p>Bugün senin günün 🎉</p>
+          <p>Senin için küçük bir sürprizim var…</p>
+          <p class="mektup-ipucu">Sürprizi açmak için dokun 🎂</p>
+        </div>
+        <div class="zarf-on"></div>
+        <div class="kapak"></div>
+        <div class="muhur">🎂</div>
+      </div>
+      <p class="zarf-ipucu" id="zarf-ipucu">Açmak için dokun 👆</p>
+    </div>
+  </div>
+
+  <h1 id="baslik">Happy Birthday!</h1>
+  <p class="istemi" id="istemi">Üfle! 🎂 &nbsp;Ekrana bas</p>
+
+  <div class="sahne">
+    <div class="mumlar" id="mumlar">
+      <div class="mum"><div class="fitil"></div><div class="alev"></div></div>
+      <div class="mum"><div class="fitil"></div><div class="alev"></div></div>
+      <div class="mum"><div class="fitil"></div><div class="alev"></div></div>
+      <div class="mum"><div class="fitil"></div><div class="alev"></div></div>
+      <div class="mum"><div class="fitil"></div><div class="alev"></div></div>
+    </div>
+    <div class="pasta">
+      <div class="kat ust"><div class="krem"></div></div>
+      <div class="kat alt"><div class="krem"></div></div>
+      <div class="tabak"></div>
+    </div>
+  </div>
+
+  <p class="mesaj" id="mesaj">🎉 Dileğin gerçek olsun!</p>
+  <button id="yeniden">🔥 Mumları tekrar yak</button>
+
+<script>
+  const ISIM = ""; // Arkadaşının adını buraya yaz, ör: "Elif"
+  if (ISIM) {
+    document.getElementById("baslik").textContent = "Happy Birthday, " + ISIM + "!";
+    document.getElementById("mektup-baslik").textContent = "İyi ki doğdun, " + ISIM + "!";
+  }
+
+  const mumlar = [...document.querySelectorAll(".mum")];
+  const istemi = document.getElementById("istemi");
+  const mesaj  = document.getElementById("mesaj");
+  const yeniden= document.getElementById("yeniden");
+  let yaniyor  = true;
+  let sahneHazir = false; // mektup kapanana kadar mumlar sönmeyecektir
+
+  /* ----- arka plan: yıldızlar + balonlar ----- */
+  for (let i = 0; i < 40; i++) {
+    const y = document.createElement("div");
+    y.className = "yildiz";
+    const b = 2 + Math.random() * 3;
+    y.style.cssText = `left:${Math.random()*100}vw; top:${Math.random()*100}vh;
+                       width:${b}px; height:${b}px; animation-delay:${Math.random()*2.4}s`;
+    document.body.appendChild(y);
+  }
+  const balonRenk = ["#ff6b9d", "#8ecae6", "#ffd166", "#a8f0c6", "#c9a7ff"];
+  for (let i = 0; i < 7; i++) {
+    const b = document.createElement("div");
+    b.className = "balon";
+    const sure = 9 + Math.random() * 8;
+    b.style.cssText = `left:${4 + Math.random()*92}vw;
+                       background:${balonRenk[i % balonRenk.length]};
+                       border-top-color:${balonRenk[i % balonRenk.length]};
+                       animation-duration:${sure}s, ${2 + Math.random()*2}s;
+                       animation-delay:-${Math.random()*sure}s, 0s`;
+    document.body.appendChild(b);
+  }
+
+  /* ----- ses (WebAudio, dosya gerekmez) ----- */
+  let ctx;
+  function ses() {
+    ctx ??= new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === "suspended") ctx.resume();
+    return ctx;
+  }
+  function uflemeSesi() {
+    try {
+      const c = ses(), t = c.currentTime;
+      const tampon = c.createBuffer(1, c.sampleRate * 0.7, c.sampleRate);
+      const veri = tampon.getChannelData(0);
+      for (let i = 0; i < veri.length; i++) veri[i] = (Math.random() * 2 - 1) * (1 - i / veri.length);
+      const src = c.createBufferSource(); src.buffer = tampon;
+      const filtre = c.createBiquadFilter(); filtre.type = "bandpass"; filtre.frequency.value = 500;
+      const kazanc = c.createGain();
+      kazanc.gain.setValueAtTime(0.4, t);
+      kazanc.gain.exponentialRampToValueAtTime(0.01, t + 0.7);
+      src.connect(filtre).connect(kazanc).connect(c.destination);
+      src.start(t);
+    } catch (e) { /* ses çıkaramazsak sayfa yine çalışsın */ }
+  }
+  function melodi() {
+    try {
+      const c = ses(), f = { G4:392, A4:440, B4:493.88, C5:523.25, D5:587.33,
+                             E5:659.25, F5:698.46, G5:783.99 };
+      const nota = ["G4","G4","A4","G4","C5","B4",
+                    "G4","G4","A4","G4","D5","C5",
+                    "G4","G4","G5","E5","C5","B4","A4",
+                    "F5","F5","E5","C5","D5","C5"];
+      const vurus = [.5,.5,1,1,1,2,  .5,.5,1,1,1,2,  .5,.5,1,1,1,1,2.5,  .5,.5,1,1,1,2.5];
+      const vurusSn = 0.42;
+      let t = c.currentTime + 0.15;
+      nota.forEach((n, i) => {
+        const o = c.createOscillator(), g = c.createGain();
+        o.type = "triangle"; o.frequency.value = f[n];
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.14, t + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.01, t + vurus[i] * vurusSn);
+        o.connect(g).connect(c.destination);
+        o.start(t); o.stop(t + vurus[i] * vurusSn);
+        t += vurus[i] * vurusSn;
+      });
+    } catch (e) {}
+  }
+
+  /* ----- konfeti ----- */
+  function konfetiPatlat() {
+    const renk = ["#ff6b9d", "#8ecae6", "#ffd166", "#a8f0c6", "#c9a7ff", "#ff9e57"];
+    for (let i = 0; i < 90; i++) {
+      const k = document.createElement("div");
+      k.className = "konfeti";
+      const sure = 2.5 + Math.random() * 1.8;
+      k.style.cssText = `left:${Math.random()*100}vw;
+                         width:${6+Math.random()*7}px; height:${8+Math.random()*8}px;
+                         background:${renk[i % renk.length]};
+                         border-radius:${Math.random() < .4 ? "50%" : "2px"};
+                         animation-duration:${sure}s;
+                         animation-delay:${Math.random()*0.7}s`;
+      document.body.appendChild(k);
+      setTimeout(() => k.remove(), (sure + 1) * 1000);
+    }
+  }
+
+  /* ----- ana etkileşim ----- */
+  function ufle() {
+    if (!sahneHazir || !yaniyor) return;
+    yaniyor = false;
+    uflemeSesi();
+    istemi.classList.add("gizli");
+    mumlar.forEach((m, i) => setTimeout(() => {
+      m.classList.add("sondu");
+      const d = document.createElement("span");
+      d.className = "duman";
+      m.appendChild(d);
+      setTimeout(() => d.remove(), 2000);
+    }, i * 170));
+    setTimeout(() => {
+      mesaj.classList.add("acik");
+      yeniden.classList.add("acik");
+      konfetiPatlat();
+      melodi();
+    }, mumlar.length * 170 + 350);
+  }
+
+  function tekrarYak(e) {
+    e.stopPropagation();
+    mumlar.forEach(m => { m.classList.remove("sondu"); });
+    mesaj.classList.remove("acik");
+    yeniden.classList.remove("acik");
+    istemi.classList.remove("gizli");
+    yaniyor = true;
+  }
+
+  document.addEventListener("pointerdown", ufle);
+  yeniden.addEventListener("pointerdown", tekrarYak);
+
+  /* ----- açılış mektubu: 1. dokunuş zarfı açar, 2. dokunuş pastayı gösterir ----- */
+  const mektupEkrani = document.getElementById("mektup-ekrani");
+  const zarf = document.getElementById("zarf");
+  const zarfIpucu = document.getElementById("zarf-ipucu");
+  let zarfAcik = false;
+
+  mektupEkrani.addEventListener("pointerdown", (e) => {
+    e.stopPropagation();
+    if (!zarfAcik) {
+      zarfAcik = true;
+      zarf.classList.add("acik");
+      zarfIpucu.classList.add("gizli");
+      document.querySelector(".zarf-baslik").classList.add("solsun");
+    } else {
+      sahneHazir = true;
+      mektupEkrani.classList.add("gitti");
+      setTimeout(() => mektupEkrani.remove(), 750);
+      konfetiPatlat();
+      melodi();
+    }
+  });
+</script>
+</body>
+</html>
