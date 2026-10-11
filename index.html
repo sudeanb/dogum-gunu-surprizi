@@ -485,30 +485,6 @@
       src.start(t);
     } catch (e) { /* ses çıkaramazsak sayfa yine çalışsın */ }
   }
-  function melodi() {
-    try {
-      const c = ses(), f = { G4:392, A4:440, B4:493.88, C5:523.25, D5:587.33,
-                             E5:659.25, F5:698.46, G5:783.99 };
-      const nota = ["G4","G4","A4","G4","C5","B4",
-                    "G4","G4","A4","G4","D5","C5",
-                    "G4","G4","G5","E5","C5","B4","A4",
-                    "F5","F5","E5","C5","D5","C5"];
-      const vurus = [.5,.5,1,1,1,2,  .5,.5,1,1,1,2,  .5,.5,1,1,1,1,2.5,  .5,.5,1,1,1,2.5];
-      const vurusSn = 0.42;
-      let t = c.currentTime + 0.15;
-      nota.forEach((n, i) => {
-        const o = c.createOscillator(), g = c.createGain();
-        o.type = "triangle"; o.frequency.value = f[n];
-        g.gain.setValueAtTime(0, t);
-        g.gain.linearRampToValueAtTime(0.14, t + 0.03);
-        g.gain.exponentialRampToValueAtTime(0.01, t + vurus[i] * vurusSn);
-        o.connect(g).connect(c.destination);
-        o.start(t); o.stop(t + vurus[i] * vurusSn);
-        t += vurus[i] * vurusSn;
-      });
-    } catch (e) {}
-  }
-
   /* ----- konfeti ----- */
   function konfetiPatlat() {
     const renk = ["#ff6b9d", "#8ecae6", "#ffd166", "#a8f0c6", "#c9a7ff", "#ff9e57"];
@@ -544,7 +520,6 @@
       mesaj.classList.add("acik");
       yeniden.classList.add("acik");
       konfetiPatlat();
-      melodi();
     }, mumlar.length * 170 + 350);
   }
 
@@ -578,7 +553,6 @@
       mektupEkrani.classList.add("gitti");
       setTimeout(() => mektupEkrani.remove(), 750);
       konfetiPatlat();
-      melodi();
     }
   });
 </script>
