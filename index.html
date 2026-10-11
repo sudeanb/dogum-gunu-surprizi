@@ -463,28 +463,6 @@
     document.body.appendChild(b);
   }
 
-  /* ----- ses (WebAudio, dosya gerekmez) ----- */
-  let ctx;
-  function ses() {
-    ctx ??= new (window.AudioContext || window.webkitAudioContext)();
-    if (ctx.state === "suspended") ctx.resume();
-    return ctx;
-  }
-  function uflemeSesi() {
-    try {
-      const c = ses(), t = c.currentTime;
-      const tampon = c.createBuffer(1, c.sampleRate * 0.7, c.sampleRate);
-      const veri = tampon.getChannelData(0);
-      for (let i = 0; i < veri.length; i++) veri[i] = (Math.random() * 2 - 1) * (1 - i / veri.length);
-      const src = c.createBufferSource(); src.buffer = tampon;
-      const filtre = c.createBiquadFilter(); filtre.type = "bandpass"; filtre.frequency.value = 500;
-      const kazanc = c.createGain();
-      kazanc.gain.setValueAtTime(0.4, t);
-      kazanc.gain.exponentialRampToValueAtTime(0.01, t + 0.7);
-      src.connect(filtre).connect(kazanc).connect(c.destination);
-      src.start(t);
-    } catch (e) { /* ses çıkaramazsak sayfa yine çalışsın */ }
-  }
   /* ----- konfeti ----- */
   function konfetiPatlat() {
     const renk = ["#ff6b9d", "#8ecae6", "#ffd166", "#a8f0c6", "#c9a7ff", "#ff9e57"];
@@ -507,7 +485,6 @@
   function ufle() {
     if (!sahneHazir || !yaniyor) return;
     yaniyor = false;
-    uflemeSesi();
     istemi.classList.add("gizli");
     mumlar.forEach((m, i) => setTimeout(() => {
       m.classList.add("sondu");
