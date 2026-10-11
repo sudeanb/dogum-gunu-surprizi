@@ -441,6 +441,79 @@
   let yaniyor  = true;
   let sahneHazir = false; // mektup kapanana kadar mumlar sönmeyecektir
 
+  /* ----- ses: yeni bir ses başlamadan eskisini ve planlanan notalarını durdur ----- */
+  let ctx;
+  const sesler = new Set();
+  let kutlamaZamani;
+  function ses() {
+    ctx ??= new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === "suspended") ctx.resume().catch(() => {});
+    return ctx;
+  }
+  function sesiBagla(kaynak, dugumler) {
+    const kayit = { kaynak, temizle() {
+      sesler.delete(kayit);
+      [kaynak, ...dugumler].forEach(d => d.disconnect());
+    }};
+    sesler.add(kayit);
+    kaynak.onended = kayit.temizle;
+  }
+  function sesleriDurdur() {
+    [...sesler].forEach(kayit => {
+      try { kayit.kaynak.stop(); } catch (_) {}
+      kayit.temizle();
+    });
+  }
+  function uflemeSesi() {
+    sesleriDurdur();
+    try {
+      const c = ses(), t = c.currentTime;
+      const tampon = c.createBuffer(1, Math.ceil(c.sampleRate * .7), c.sampleRate);
+      const veri = tampon.getChannelData(0);
+      for (let i = 0; i < veri.length; i++) veri[i] = (Math.random() * 2 - 1) * (1 - i / veri.length);
+      const src = c.createBufferSource(); src.buffer = tampon;
+      const filtre = c.createBiquadFilter(); filtre.type = "bandpass"; filtre.frequency.value = 500;
+      const kazanc = c.createGain();
+      kazanc.gain.setValueAtTime(.4, t);
+      kazanc.gain.exponentialRampToValueAtTime(.01, t + .7);
+      src.connect(filtre).connect(kazanc).connect(c.destination);
+      sesiBagla(src, [filtre, kazanc]);
+      src.start(t); src.stop(t + .7);
+    } catch (_) { sesleriDurdur(); }
+  }
+  function melodi() {
+    sesleriDurdur();
+    if (document.hidden) return;
+    try {
+      const c = ses();
+      const f = { G4:392, A4:440, B4:493.88, C5:523.25, D5:587.33,
+                  E5:659.25, F5:698.46, G5:783.99 };
+      const nota = ["G4","G4","A4","G4","C5","B4",
+                    "G4","G4","A4","G4","D5","C5",
+                    "G4","G4","G5","E5","C5","B4","A4",
+                    "F5","F5","E5","C5","D5","C5"];
+      const vurus = [.5,.5,1,1,1,2, .5,.5,1,1,1,2, .5,.5,1,1,1,1,2.5, .5,.5,1,1,1,2.5];
+      let t = c.currentTime + .05;
+      nota.forEach((n, i) => {
+        const sure = vurus[i] * .42;
+        const o = c.createOscillator(), g = c.createGain();
+        o.type = "triangle"; o.frequency.value = f[n];
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(.14, t + .03);
+        g.gain.exponentialRampToValueAtTime(.001, t + sure - .02);
+        g.gain.linearRampToValueAtTime(0, t + sure);
+        o.connect(g).connect(c.destination);
+        sesiBagla(o, [g]);
+        o.start(t); o.stop(t + sure);
+        t += sure;
+      });
+    } catch (_) { sesleriDurdur(); }
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) sesleriDurdur();
+  });
+  window.addEventListener("pagehide", sesleriDurdur);
+
   /* ----- arka plan: yıldızlar + balonlar ----- */
   for (let i = 0; i < 40; i++) {
     const y = document.createElement("div");
@@ -485,6 +558,7 @@
   function ufle() {
     if (!sahneHazir || !yaniyor) return;
     yaniyor = false;
+    uflemeSesi();
     istemi.classList.add("gizli");
     mumlar.forEach((m, i) => setTimeout(() => {
       m.classList.add("sondu");
@@ -493,15 +567,19 @@
       m.appendChild(d);
       setTimeout(() => d.remove(), 2000);
     }, i * 170));
-    setTimeout(() => {
+    clearTimeout(kutlamaZamani);
+    kutlamaZamani = setTimeout(() => {
       mesaj.classList.add("acik");
       yeniden.classList.add("acik");
       konfetiPatlat();
+      melodi();
     }, mumlar.length * 170 + 350);
   }
 
   function tekrarYak(e) {
     e.stopPropagation();
+    clearTimeout(kutlamaZamani);
+    sesleriDurdur();
     mumlar.forEach(m => { m.classList.remove("sondu"); });
     mesaj.classList.remove("acik");
     yeniden.classList.remove("acik");
@@ -520,6 +598,7 @@
 
   mektupEkrani.addEventListener("pointerdown", (e) => {
     e.stopPropagation();
+    if (sahneHazir) return;
     if (!zarfAcik) {
       zarfAcik = true;
       zarf.classList.add("acik");
@@ -530,6 +609,7 @@
       mektupEkrani.classList.add("gitti");
       setTimeout(() => mektupEkrani.remove(), 750);
       konfetiPatlat();
+      melodi();
     }
   });
 </script>
